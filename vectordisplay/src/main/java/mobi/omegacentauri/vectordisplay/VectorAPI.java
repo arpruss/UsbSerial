@@ -35,6 +35,7 @@ public class VectorAPI {
 	static final int TIMEOUT = 5000;
 	long commandStartTime;
 	Context context;
+	byte lastChar = 0;
 		
 	public VectorAPI(Context context) {
 	    this.context = context;
@@ -53,6 +54,7 @@ public class VectorAPI {
 	
 	public Command parse(byte ch) {
 		DisplayState newState;
+
 		if (currentCommand != null && System.currentTimeMillis() < commandStartTime + TIMEOUT) {
 			newState = currentCommand.parse(context, buffer, ch);
 			if (newState != null) {
@@ -66,30 +68,39 @@ public class VectorAPI {
             }
 		}
 		else {
-			Class<? extends Command> cl = map.get(ch);
-			if (cl != null) {
-				Log.v("VectorDisplay", cl.toString());
-				Command c;
-				try {
-					c = (Command) cl.getConstructor(DisplayState.class).newInstance(state);
-				} catch (Exception e) {
-					Log.e("VectorDisplay", e.toString());
-					c = null;
-				}
-				if (c != null) {
-					currentCommand = c;
-					commandStartTime = System.currentTimeMillis();
-					buffer.clear();
-					newState = currentCommand.parse(context, buffer);
-					if (newState != null) {
-						state = newState;
-						currentCommand = null;
-						return c.doesDraw() ? c : null;
-					}
-				}
+		    Log.v("VectorDisplay", "current "+(int)lastChar+" "+(int)ch);
+			if (lastChar != 0 && (0xFF & ch) == (lastChar ^ 0xFF)) {
+                Class<? extends Command> cl = map.get(lastChar);
+                lastChar = 0;
+                if (cl != null) {
+                    Log.v("VectorDisplay", cl.toString());
+                    Command c;
+                    try {
+                        c = (Command) cl.getConstructor(DisplayState.class).newInstance(state);
+                    } catch (Exception e) {
+                        Log.e("VectorDisplay", e.toString());
+                        c = null;
+                    }
+                    if (c != null) {
+                        currentCommand = c;
+                        commandStartTime = System.currentTimeMillis();
+                        buffer.clear();
+                        newState = currentCommand.parse(context, buffer);
+                        if (newState != null) {
+                            state = newState;
+                            currentCommand = null;
+                            return c.doesDraw() ? c : null;
+                        }
+                    }
+                }
 			}
 			else {
-				Log.v("VectorDisplay", "unparsed "+ch);
+			    if ('A' <= ch && ch <= 'Z') {
+			        lastChar = ch;
+                }
+                else {
+			        lastChar = 0;
+                }
 			}
 		}
 		return null;
