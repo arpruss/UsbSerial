@@ -12,6 +12,12 @@ public class Clear extends Command {
 	}
 
 	@Override
+	public boolean needToClearHistory() { return true; }
+
+	@Override
+	public int fixedArgumentsLength() { return 0; }
+
+	@Override
 	public void draw(Canvas c) {
 		Paint paint = new Paint();
 		paint.setColor(state.backColor);

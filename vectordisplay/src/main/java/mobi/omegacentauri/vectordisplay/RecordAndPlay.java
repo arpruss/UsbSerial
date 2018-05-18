@@ -30,6 +30,10 @@ public class RecordAndPlay {
     public void feed(byte datum) {
         Command c = parser.parse(datum);
         if (c != null) {
+            if (c.needToClearHistory()) {
+                head = 0;
+                len = 0;
+            }
             commands[(head+len) % MAX_ITEMS] = c;
             if (len == MAX_ITEMS)
                 head = (head + 1) % MAX_ITEMS;

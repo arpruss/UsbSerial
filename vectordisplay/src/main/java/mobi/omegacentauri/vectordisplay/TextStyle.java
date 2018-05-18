@@ -14,23 +14,19 @@ public class TextStyle extends Command {
 	public TextStyle(DisplayState state) {
 		super(state);
 	}
-	
-	@Override 
-	public DisplayState parse(Context context, Buffer buffer, byte c) {
-		buffer.put(c);
-		if (buffer.length() >= 3) {
-			state.align = (char)buffer.data[0];
-			state.textSize = buffer.getInteger(1, 2);
-			return state;
-		}
-		return null;
-	}
-	
+
 	@Override
-	public DisplayState parse(Context context, Buffer buffer) {
-		return null;
+	public int fixedArgumentsLength() {
+		return 3;
 	}
 
+	@Override
+	public DisplayState parseArguments(Context context, Buffer buffer) {
+		state.align = (char)buffer.data[0];
+		state.textSize = buffer.getInteger(1, 2);
+		return state;
+	}
+	
 	@Override
 	public boolean doesDraw() {
 		return false;

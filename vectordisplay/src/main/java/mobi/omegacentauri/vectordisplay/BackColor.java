@@ -12,22 +12,18 @@ public class BackColor extends Command {
 	public BackColor(DisplayState state) {
 		super(state);
 	}
+
+	@Override
+	public int fixedArgumentsLength() {
+		return 4;
+	}
 	
 	@Override 
-	public DisplayState parse(Context context, Buffer buffer, byte c) {
-		buffer.put(c);
-		if (buffer.length() >= 4) {
-			state.backColor = buffer.getInteger(0,4);
-			return state;
-		}
-		return null;
+	public DisplayState parseArguments(Context context, Buffer buffer) {
+		state.backColor = buffer.getInteger(0,4);
+		return state;
 	}
 	
-	@Override
-	public DisplayState parse(Context context, Buffer buffer) {
-		return null;
-	}
-
 	@Override
 	public boolean doesDraw() {
 		return false;

@@ -56,7 +56,11 @@ public class VectorAPI {
 		DisplayState newState;
 
 		if (currentCommand != null && System.currentTimeMillis() < commandStartTime + TIMEOUT) {
-			newState = currentCommand.parse(context, buffer, ch);
+			if (!buffer.put(ch)) {
+				currentCommand = null;
+				return null;
+			}
+			newState = currentCommand.parse(context, buffer);
 			if (newState != null) {
 				Command c = currentCommand;
 				currentCommand = null;
@@ -64,6 +68,7 @@ public class VectorAPI {
 				return c.doesDraw() ? c : null;
 			}
 			else if (currentCommand.errorState) {
+				currentCommand = null;
 			    return null;
             }
 		}
@@ -85,12 +90,6 @@ public class VectorAPI {
                         currentCommand = c;
                         commandStartTime = System.currentTimeMillis();
                         buffer.clear();
-                        newState = currentCommand.parse(context, buffer);
-                        if (newState != null) {
-                            state = newState;
-                            currentCommand = null;
-                            return c.doesDraw() ? c : null;
-                        }
                     }
                 }
 			}
@@ -115,13 +114,27 @@ public class VectorAPI {
 			inBuffer = 0;
 		}
 		
-		void put(byte b) {
-			if (inBuffer < MAX_BUFFER)
+		boolean put(byte b) {
+			if (inBuffer < MAX_BUFFER) {
 				data[inBuffer++] = b;
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		
 		int length() {
 			return inBuffer;
+		}
+
+		boolean checksum() {
+			int sum = 0;
+			for (int i=0; i<inBuffer-1; i++) {
+				sum = ((data[i] & 0xFF) + sum) & 0xFF;
+			}
+			sum ^= 0xFF;
+			return data[inBuffer-1] == (byte)sum;
 		}
 		
 		int getInteger(int start, int length) {
@@ -150,6 +163,10 @@ public class VectorAPI {
 			catch(Exception e) {
 				return "";
 			}
+		}
+
+		public byte getByte(int i) {
+			return data[i];
 		}
 	}
 	

@@ -16,26 +16,25 @@ public class Text extends Command {
 	public Text(DisplayState state) {
 		super(state);
 	}
-	
-	@Override 
-	public DisplayState parse(Context context, Buffer buffer, byte c) {
-		if (buffer.length() >= 4 && c == 0) {
-			x1 = buffer.getInteger(0, 2);
-			y1 = buffer.getInteger(2, 2);
-			text = buffer.getString(4);
-			return state;
-		}
-		else {
-			buffer.put(c);		
-			return null;
-		}
-	}
-	
+
 	@Override
-	public DisplayState parse(Context context, Buffer buffer) {
-		return null;
+	public int fixedArgumentsLength() {
+		return 4;
 	}
 
+	@Override
+	public boolean haveStringArgument() {
+		return true;
+	}
+
+	@Override
+	public DisplayState parseArguments(Context context, Buffer buffer) {
+		x1 = buffer.getInteger(0, 2);
+		y1 = buffer.getInteger(2, 2);
+		text = buffer.getString(4, buffer.length()-1-4);
+		return state;
+	}
+	
 	@Override
 	public void draw(Canvas c) {
 		Paint p = new Paint();

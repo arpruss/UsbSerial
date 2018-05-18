@@ -12,20 +12,16 @@ public class ForeColor extends Command {
 	public ForeColor(DisplayState state) {
 		super(state);
 	}
-	
-	@Override 
-	public DisplayState parse(Context context, Buffer buffer, byte c) {
-		buffer.put(c);
-		if (buffer.length() >= 4) {
-			state.foreColor = buffer.getInteger(0,4);
-			return state;
-		}
-		return null;
-	}
-	
-	@Override
-	public DisplayState parse(Context context, Buffer buffer) {
-		return null;
+
+    @Override
+    public int fixedArgumentsLength() {
+        return 4;
+    }
+
+    @Override
+	public DisplayState parseArguments(Context context, Buffer buffer) {
+		state.foreColor = buffer.getInteger(0,4);
+		return state;
 	}
 
 	@Override

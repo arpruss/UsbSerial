@@ -13,25 +13,21 @@ public class CoordinateSystem extends Command {
 	public CoordinateSystem(DisplayState state) {
 		super(state);
 	}
+
+	@Override
+	public int fixedArgumentsLength() {
+		return 5;
+	}
 	
 	@Override 
-	public DisplayState parse(Context context, Buffer buffer, byte c) {
-		buffer.put(c);
-		if (buffer.length() >= 5) {
-			state.width = buffer.getInteger(0, 2);
-			state.height = buffer.getInteger(2, 2);
-			Log.v("VectorDisplay", "coordinate "+state.width+" "+state.height);
-			state.fit = buffer.data[4] != 0;
-			return state;
-		}
-		return null;
+	public DisplayState parseArguments(Context context, Buffer buffer) {
+		state.width = buffer.getInteger(0, 2);
+		state.height = buffer.getInteger(2, 2);
+		Log.v("VectorDisplay", "coordinate "+state.width+" "+state.height);
+		state.fit = buffer.data[4] != 0;
+		return state;
 	}
 	
-	@Override
-	public DisplayState parse(Context context, Buffer buffer) {
-		return null;
-	}
-
 	@Override
 	public boolean doesDraw() {
 		return false;

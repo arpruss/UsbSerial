@@ -14,23 +14,19 @@ public class Point extends Command {
 	public Point(DisplayState state) {
 		super(state);
 	}
-	
-	@Override 
-	public DisplayState parse(Context context, Buffer buffer, byte c) {
-		buffer.put(c);
-		if (buffer.length() >= 4) {
-			x1 = buffer.getInteger(0, 2);
-			y1 = buffer.getInteger(2, 2);
-			return state;
-		}
-		return null;
-	}
-	
+
 	@Override
-	public DisplayState parse(Context context, Buffer buffer) {
-		return null;
+	public int fixedArgumentsLength() {
+		return 4;
 	}
 
+	@Override
+	public DisplayState parseArguments(Context context, Buffer buffer) {
+		x1 = buffer.getInteger(0, 2);
+		y1 = buffer.getInteger(2, 2);
+		return state;
+	}
+	
 	@Override
 	public void draw(Canvas c) {
 		Paint p = new Paint();
