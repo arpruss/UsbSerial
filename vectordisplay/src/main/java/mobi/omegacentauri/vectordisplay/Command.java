@@ -8,6 +8,8 @@ import android.graphics.Canvas;
 public class Command {
 	VectorAPI.DisplayState state;
 
+	public boolean errorState = false;
+
 	public Command(VectorAPI.DisplayState state) {
 		this.state = state;
 	}

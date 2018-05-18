@@ -61,6 +61,9 @@ public class VectorAPI {
 				state = newState;
 				return c.doesDraw() ? c : null;
 			}
+			else if (currentCommand.errorState) {
+			    return null;
+            }
 		}
 		else {
 			Class<? extends Command> cl = map.get(ch);
