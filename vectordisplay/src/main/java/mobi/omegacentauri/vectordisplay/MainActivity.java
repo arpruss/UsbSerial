@@ -14,6 +14,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -59,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     private UsbService usbService;
     private TextView display;
     private EditText editText;
-    private CheckBox box9600, box38400;
     private MyHandler mHandler;
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
@@ -192,6 +194,25 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(mUsbReceiver, filter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        int id = item.getItemId();
+        if (id == R.id.clear) {
+            record.feed(new Clear(record.parser.state));
+        }
+        if (id == R.id.reset) {
+            record.feed(new Reset(record.parser.state));
+        }
+        return super.onOptionsItemSelected(item);
+    }
     /*
      * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
      */

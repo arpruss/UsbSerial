@@ -50,6 +50,7 @@ public class VectorAPI {
 		map.put((byte) 'B', BackColor.class);
 		map.put((byte) 'Z', CoordinateSystem.class);
 		map.put((byte) 'M', PopupMessage.class);
+		map.put((byte) 'E', Reset.class);
 	}
 	
 	public Command parse(byte ch) {
@@ -171,16 +172,32 @@ public class VectorAPI {
 	}
 	
 	static class DisplayState {
-		int width = 512;
-		int height = 512;
-		boolean fit = true;
-		int foreColor = Color.WHITE;
-		int backColor = Color.BLACK;
-		float thickness = 1f;
-		int textSize = 12;
-		char align = 'l';
-		boolean bold = false;
-		
+		int width;
+		int height;
+		boolean fit;
+		int foreColor;
+		int backColor;
+		float thickness;
+		int textSize;
+		char align;
+		boolean bold;
+
+		public void reset() {
+			width = 640;
+			height = 480;
+			fit = true;
+			foreColor = Color.WHITE;
+			backColor = Color.BLACK;
+			thickness = 1f;
+			textSize = 12;
+			align = 'l';
+			bold = false;
+		}
+
+		public DisplayState() {
+			reset();
+		}
+
 		public Coords getScale(Canvas c) {
 			int cw = c.getWidth();
 			int ch = c.getHeight();
